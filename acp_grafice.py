@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from seaborn import heatmap
+import plotly.express as px
+import os
 
 def plot_varianta(alpha:np.ndarray,procent_minimal=80,scal=True):
     m = len(alpha)
@@ -41,21 +43,11 @@ def corelograma(t:pd.DataFrame,titlu="corelograma",vmin=-1,vmax=1,cmap = "RdYlBu
     f = plt.figure(figsize=(12, 10))  # Mărește puțin figura
     ax = f.add_subplot(1, 1, 1)
     ax.set_title(titlu, fontdict={"color": "b", "fontsize": 16})
-
-    # Heatmap-ul propriu-zis
     heatmap(t, vmin=vmin, vmax=vmax, cmap=cmap, annot=annot, ax=ax)
-
-    # --- FIX PENTRU ETICHETE ---
-    # Rotește etichetele de pe axa X (coloane)
     plt.xticks(rotation=45, ha='right')
-    # Asigură-te că etichetele de pe axa Y (rânduri) sunt orizontale
     plt.yticks(rotation=0)
-
-    # Folosește tight_layout pentru a ajusta automat marginile
     plt.tight_layout()
-    # ---------------------------
     plt.savefig("graphics/graphics_acp/"+titlu+".png")
-
 
 
 def plot_scoruri_corelatii(t: pd.DataFrame,
@@ -112,3 +104,40 @@ def plot_scoruri_corelatii(t: pd.DataFrame,
 
     plt.tight_layout()
     plt.savefig("graphics/graphics_acp/" + titlu + "-" + varx + "-" + vary + ".png")
+
+
+def harta_scoruri(t_scoruri: pd.DataFrame, t_initial: pd.DataFrame, coloana_iso="ISO_Code", titlu="Harta Scoruri"):
+    if not os.path.exists("graphics/graphics_acp/"):
+        os.makedirs("graphics/graphics_acp/")
+
+    if coloana_iso not in t_initial.columns:
+        print(f"EROARE: Nu gasesc coloana '{coloana_iso}' in datele initiale!")
+        return
+
+    df_harta = t_initial[[coloana_iso]].join(t_scoruri, how="inner")
+    df_harta = df_harta.reset_index()
+
+    nume_vechi = df_harta.columns[0]
+    df_harta.rename(columns={nume_vechi: "Countries"}, inplace=True)
+
+    coloane_componente = [c for c in t_scoruri.columns if c.startswith("C")]
+
+    for comp in coloane_componente:
+        fig = px.choropleth(
+            df_harta,
+            locations=coloana_iso,
+            color=comp,
+            hover_name="Countries",  # Acum stim sigur ca exista coloana asta
+            color_continuous_scale="RdYlBu",
+            title=f"{titlu} - {comp}",
+            template="plotly_white"
+        )
+
+        fig.update_layout(
+            coloraxis_colorbar=dict(title="Scor"),
+            margin={"r": 0, "t": 50, "l": 0, "b": 0}
+        )
+
+        out_path = f"graphics/graphics_acp/{titlu}_{comp}.html"
+        fig.write_html(out_path)
+        print(f"-> Harta salvata: {out_path}")

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from acp_functii import nan_replace_df, acp, tabelare_varianta, salvare_ndarray
-from acp_grafice import plot_varianta, corelograma, plot_scoruri_corelatii
+from acp_grafice import plot_varianta, corelograma, plot_scoruri_corelatii, harta_scoruri
 
 pd.set_option("display.max_columns",None)
 np.set_printoptions(3,sys.maxsize,suppress=True)
@@ -132,4 +132,7 @@ corelograma(
     cmap="Reds",
     annot=len(variabile_observate)<15
 )
+
+#Optional: harta scoruri
+harta_scoruri(t_s, t, coloana_iso="ISO_Code", titlu="harta_scoruri")
 

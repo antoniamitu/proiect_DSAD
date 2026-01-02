@@ -264,6 +264,26 @@ def main():
     print("\nScoruri factoriale cu rotatie Varimax (3 factori):")
     print(t_f_econ.round(3))
 
+    # ------------------------------------------------------------------------------
+    # B5. COMUNALITATI (pe solutia cu rotatie, 3 factori)
+    # ------------------------------------------------------------------------------
+
+    model_af_econ = fa.FactorAnalyzer(n_factors=3, rotation="varimax")
+    model_af_econ.fit(x)
+
+    comm = model_af_econ.get_communalities()
+
+    t_comm = pd.DataFrame(
+        {"Comunalitate": comm},
+        index=variabile_observate
+    )
+    t_comm.index.name = "Indicator"
+
+    t_comm.to_csv("data_out/data_out_fa/Comm.csv")
+
+    print("\nComunalitati:")
+    print(t_comm.round(3))
+
 
 if __name__ == "__main__":
     main()

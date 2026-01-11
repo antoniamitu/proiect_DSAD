@@ -5,6 +5,7 @@ from seaborn import heatmap
 import plotly.express as px
 import os
 
+# pe componente, decidem numarul optim de elemente pe care le vom retine in modelul final, avand in vedere criteriul kaiser: componentele care au valoare proprie(variantei explicate pe fiecare axa)>1; criteriul Catell, unde se identifica punctul in care panta curbei devine lina, adica aportul informational al comp ulterioare devine neglijabil si criteriul acoperirii unde urmarim atingerea unui procent de varianta cumulat considerat satisfacator
 def plot_varianta(alpha:np.ndarray,procent_minimal=80,scal=True):
     m = len(alpha)
     x = np.arange(1,m+1)
@@ -40,7 +41,7 @@ def show():
     plt.show()
 
 def corelograma(t:pd.DataFrame,titlu="corelograma",vmin=-1,vmax=1,cmap = "RdYlBu",annot=True):
-    f = plt.figure(figsize=(12, 10))  # Mărește puțin figura
+    f = plt.figure(figsize=(12, 10))
     ax = f.add_subplot(1, 1, 1)
     ax.set_title(titlu, fontdict={"color": "b", "fontsize": 16})
     heatmap(t, vmin=vmin, vmax=vmax, cmap=cmap, annot=annot, ax=ax)
@@ -56,7 +57,7 @@ def plot_scoruri_corelatii(t: pd.DataFrame,
                            titlu="Plot scoruri",
                            etichete=None,
                            corelatii=False,
-                           top_outlieri=20  # <- control clar
+                           top_outlieri=20
                            ):
     f = plt.figure(figsize=(14, 10))
     # aspect=1 doar pentru cercul corelațiilor
@@ -75,7 +76,7 @@ def plot_scoruri_corelatii(t: pd.DataFrame,
     # toate punctele
     ax.scatter(t[varx], t[vary], c="r", alpha=0.5, s=30)
 
-    # axele la 0 (ca în seminar)
+    # axele la 0
     ax.axvline(0, c="k")
     ax.axhline(0, c="k")
 
@@ -127,7 +128,7 @@ def harta_scoruri(t_scoruri: pd.DataFrame, t_initial: pd.DataFrame, coloana_iso=
             df_harta,
             locations=coloana_iso,
             color=comp,
-            hover_name="Countries",  # Acum stim sigur ca exista coloana asta
+            hover_name="Countries",
             color_continuous_scale="RdYlBu",
             title=f"{titlu} - {comp}",
             template="plotly_white"

@@ -9,9 +9,8 @@ pd.set_option("display.max_columns",None)
 np.set_printoptions(3,sys.maxsize,suppress=True)
 
 t=pd.read_csv("data_in/economicdata2023-2023.csv")
-nan_replace_df(t)  # din seminarul 8 – functia nan_replace_df (inlocuire lipsuri)\
+nan_replace_df(t)
 
-#Seminar 8 indentificare coloane relevenate
 #avem 2 coloane de identificare: ISO_Code, Countries
 variabile_observate=list(t)[2:]
 
@@ -43,7 +42,7 @@ t_r = salvare_ndarray(r_v,variabile_observate,variabile_observate,"Indicatori","
 corelograma(t_r, titlu="corelograma_variabile", annot=len(variabile_observate)<15)
 
 # Calcul componente
-c = x_@a
+c = x_@a # scorurile pe componente, adica pe ce axa cade fiecare tara
 n,m = x.shape
 
 # Tabel: corelațiile dintre variabilele observate și componentele principale
@@ -51,7 +50,7 @@ r_xc = np.corrcoef(x_,c,rowvar=False)[:m,m:]
 # Selectam doar primele 3 componente (taiem tabelul automat)
 r_xc_final = r_xc[:, :nr_componente]
 
-# DEFINIM NUMELE CELOR 3 COLOANE (Fixul critic!)
+# DEFINIM NUMELE CELOR 3 COLOANE
 col_comp = ["C"+str(i+1) for i in range(nr_componente)]
 
 t_r_xc = salvare_ndarray(r_xc_final, variabile_observate, col_comp, "Indicatori", "data_out/data_out_acp/corelatii_variabile_componente.csv")
@@ -69,7 +68,7 @@ for i in range(1,nr_componente):
         )
 
 # Grafice: plot scoruri
-s = c/np.sqrt(alpha)
+s = c/np.sqrt(alpha) #scorurile standardizate
 # Selectam scorurile doar pentru cele 3 componente
 c_final = c[:, :nr_componente]
 s_final = s[:, :nr_componente]
@@ -91,7 +90,7 @@ for i in range(1,nr_componente):
 c2 = c * c
 cosinus_total = (c2.T / np.sum(c2, axis=1)).T
 
-# IMPORTANT: Selectam doar primele 3 coloane pentru a salva in CSV-ul nostru (C1, C2, C3)
+# Selectam doar primele 3 coloane pentru a salva in CSV-ul nostru (C1, C2, C3)
 cosinus_final = cosinus_total[:, :nr_componente]
 t_cosin = salvare_ndarray(
     cosinus_final,
@@ -115,8 +114,8 @@ t_contrib = salvare_ndarray(
 )
 corelograma(t_contrib,"contributii",0,5,"Blues",annot=False)
 
-# Tabel: Comunalitati
-r2 = r_xc_final*r_xc_final
+# Tabel: Comunalitati = procentul din varianta unei variabile care este recuperat de primele 3 componente principale
+r2 = r_xc_final*r_xc_final #corelatiile dintre variabile si componente sunt transformate in varianta explicata pe componenta prin patrate
 comunalitati = np.cumsum(r2,axis=1)
 t_comm = salvare_ndarray(
     comunalitati,

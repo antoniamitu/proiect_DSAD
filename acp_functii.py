@@ -12,6 +12,9 @@ def nan_replace_df(t: pd.DataFrame):
                 t.fillna({c: t[c].mode()[0]}, inplace=True)
 
 
+#acp presupune centrarea datelor(scadarea mediei din fiecare valoare), standardizarea(impartirea valorilor centrate la abaterea standard), am calculat matricea de corelatie pe baza datelor standardizate si am extras valorile proprii(eigenvalues) care coresp variantei explicate pe fiecare axa si vectorii proprii(eigenvectors) directiile axelor
+#fiecare vector propriu defineste o axa noua(o componenta principala) in spatiul variabilelor standardizate
+#componentele au fost sortate descrescator
 def acp(x: np.ndarray, ddof=0, scal=True):
     n, m = x.shape
     x_ = x - np.mean(x, axis=0)
@@ -28,6 +31,7 @@ def acp(x: np.ndarray, ddof=0, scal=True):
     a = vecp[:,k]
     return x_,r_v,alpha,a
 
+#tabel care prezinta valoarea proprie(varianta explicata pe fiecare axa), procentul de varianta explicata si procentul cumulat
 def tabelare_varianta(alpha:np.ndarray):
     m = len(alpha)
     t = pd.DataFrame(index=["C"+str(i+1) for i in range(m)])
